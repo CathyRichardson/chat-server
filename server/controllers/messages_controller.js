@@ -21,22 +21,43 @@ const readMessage = (req, res) => {
 const updateMessage = (req, res) => {
     const updateID = req.params.id;
     const updateText = req.body.text;
+    //if no text was provided, return an error
+    if (!updateText) {
+        res.status(409).send("new text is empty");
+        return;
+    }
+
     const index = messageArr.findIndex(e => e.id == updateID);
-    messageArr[index].text = updateText
-     // let message = messageArr[index];
-    // messageArr[index] = {
-    //   id: message.id,
-    //   text: text || message.text,
-    //   time: message.time
-    // };
-    res.status(200).send(messageArr);
+    //only update if the message was found, otherwise return an error
+    if (index >= 0) {
+        messageArr[index].text = updateText
+        res.status(200).send(messageArr);
+    } else {
+        res.status(404).send("message not found");
+    }
 }
+
+// devmtn solution for update:
+// let message = messageArr[index];
+// messageArr[index] = {
+//   id: message.id,
+//   text: text || message.text,  //if new text is 'falsy' just use the old text. 
+//   time: message.time
+// };
+
+
+
 
 const deleteMessage = (req, res) => {
     const deleteID = req.params.id;
     const index = messageArr.findIndex(e => e.id == deleteID);
-    messageArr.splice(index, 1);
-    res.status(200).send(messageArr);
+    if (index >= 0) {
+        messageArr.splice(index, 1);
+        res.status(200).send(messageArr);
+    } else {
+        res.status(404).send("message not found");
+    }
+
 }
 
 module.exports = {
